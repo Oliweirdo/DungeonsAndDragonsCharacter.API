@@ -8,7 +8,7 @@ namespace DungeonsAndDragonsCharacter.API.Entities
 {
     public class CharacterDbContext : DbContext
     {
-        private string _connectionString = "Server=(localdb)\\mssqllocaldb;Database=D&DCharacterDb;Trusted_Connection=true";
+        private string _connectionString = "Server=(localdb)\\mssqllocaldb;Database=D&DCharacterDATABASE;Trusted_Connection=true";
 
         public DbSet<Character> Characters { get; set; }
         public DbSet<CharacterBackground> CharacterBackgrounds { get; set; }
