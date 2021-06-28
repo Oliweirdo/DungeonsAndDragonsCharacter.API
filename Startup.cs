@@ -1,3 +1,4 @@
+using DungeonsAndDragonsCharacter.API.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,6 +29,7 @@ namespace DungeonsAndDragonsCharacter.API
         {
 
             services.AddControllers();
+            services.AddDbContext<CharacterDbContext>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DungeonsAndDragonsCharacter.API", Version = "v1" });
