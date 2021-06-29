@@ -51,5 +51,15 @@ namespace DungeonsAndDragonsCharacter.API.Controllers
             return Ok(charactersDtos);
 
         }
+
+        [HttpPost]
+        public ActionResult CreateCharacter([FromBody] CreateCharacterDto dto )
+        {
+            var character = _mapper.Map<Character>(dto);
+            _dbContext.Characters.Add(character);
+            _dbContext.SaveChanges();
+
+            return Created($"/api/character/[character.Id]", null);
+        }
     }
 }

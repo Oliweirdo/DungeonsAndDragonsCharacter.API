@@ -13,6 +13,8 @@ namespace DungeonsAndDragonsCharacter.API
         public AutoMapperConfiguration()
         {
             CreateMap<Character, CharacterDto>();
+
+            CreateMap<CreateCharacterDto, Character>();
         }
     }
 }
