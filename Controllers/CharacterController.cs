@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DungeonsAndDragonsCharacter.API.Entities;
 using DungeonsAndDragonsCharacter.API.Models;
+using DungeonsAndDragonsCharacter.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,24 +13,17 @@ namespace DungeonsAndDragonsCharacter.API.Controllers
     [Route("api/character")]
     public class CharacterController : ControllerBase
     {
-        private readonly CharacterDbContext _dbContext;
-        private readonly IMapper _mapper;
+        private readonly ICharacterService _characterService;
 
-        public CharacterController(CharacterDbContext dbContext, IMapper mapper)
+        public CharacterController(ICharacterService characterService)
         {
-            _dbContext = dbContext;
-            _mapper = mapper;
+            _characterService = characterService;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<CharacterDto>> GetAll()
         {
-            var characters = _dbContext
-                .Characters
-                .ToList();
-
-
-            var charactersDtos = _mapper.Map<List<CharacterDto>>(characters);
+            var charactersDtos = _characterService.GetAll();
 
             return Ok(charactersDtos);
         }
@@ -37,29 +31,18 @@ namespace DungeonsAndDragonsCharacter.API.Controllers
         [HttpGet("{id}")]
         public ActionResult<CharacterDto> Get([FromRoute] int id)
         {
-            var character = _dbContext
-                .Characters
-                .FirstOrDefault(r =>r.Id ==id);
+            var characterDto = _characterService.GetById(id);
 
-            if(character is null)
-            {
-                return NotFound();
-            }
-
-            var charactersDtos = _mapper.Map<CharacterDto>(character);
-
-            return Ok(charactersDtos);
+            return Ok(characterDto);
 
         }
 
         [HttpPost]
-        public ActionResult CreateCharacter([FromBody] CreateCharacterDto dto )
+        public ActionResult CreateCharacter([FromBody] CreateCharacterDto dto)
         {
-            var character = _mapper.Map<Character>(dto);
-            _dbContext.Characters.Add(character);
-            _dbContext.SaveChanges();
+            var id = _characterService.Create(dto);
 
-            return Created($"/api/character/[character.Id]", null);
+            return Created($"/api/character/{id}", null);
         }
     }
 }

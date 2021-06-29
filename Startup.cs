@@ -1,5 +1,6 @@
 using DungeonsAndDragonsCharacter.API.Entities;
 using DungeonsAndDragonsCharacter.API.Migrations;
+using DungeonsAndDragonsCharacter.API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -32,6 +33,7 @@ namespace DungeonsAndDragonsCharacter.API
             services.AddControllers();
             services.AddDbContext<CharacterDbContext>();
             services.AddScoped<CharacterSeeder>();
+            services.AddScoped<ICharacterService, CharacterService>();
             services.AddAutoMapper(this.GetType().Assembly);
             services.AddSwaggerGen(c =>
             {
