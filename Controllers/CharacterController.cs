@@ -57,5 +57,15 @@ namespace DungeonsAndDragonsCharacter.API.Controllers
 
             return NotFound();
         }
+
+        [HttpPatch("{id}")]
+        public ActionResult Update([FromBody] UpdateCharacterDto dto, [FromRoute] int id)
+        {
+            var isUpdated = _characterService.Update(id, dto);
+            if (!isUpdated)
+                return NotFound();
+
+            return Ok();
+        }
     }
 }

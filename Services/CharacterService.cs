@@ -14,6 +14,7 @@ namespace DungeonsAndDragonsCharacter.API.Services
         IEnumerable<CharacterDto> GetAll();
         int Create(CreateCharacterDto dto);
         bool Delete(int id);
+        bool Update(int id, UpdateCharacterDto dto);
     }
 
 
@@ -72,6 +73,22 @@ namespace DungeonsAndDragonsCharacter.API.Services
             if (character is null) return false;
 
             _dbContext.Characters.Remove(character);
+            _dbContext.SaveChanges();
+
+
+            return true;
+        }
+
+        public bool Update(int id, UpdateCharacterDto dto)
+        {
+            var character = _dbContext
+              .Characters
+              .FirstOrDefault(r => r.Id == id);
+
+            if (character is null) return false;
+
+
+            _dbContext.Characters.Update(character);
             _dbContext.SaveChanges();
 
 
