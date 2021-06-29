@@ -44,5 +44,18 @@ namespace DungeonsAndDragonsCharacter.API.Controllers
 
             return Created($"/api/character/{id}", null);
         }
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete([FromRoute] int id)
+        {
+            var isDeleted = _characterService.Delete(id);
+
+            if (isDeleted)
+            {
+                return NoContent();
+            }
+
+            return NotFound();
+        }
     }
 }
