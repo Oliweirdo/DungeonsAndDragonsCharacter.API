@@ -1,4 +1,6 @@
-﻿using DungeonsAndDragonsCharacter.API.Entities;
+﻿using AutoMapper;
+using DungeonsAndDragonsCharacter.API.Entities;
+using DungeonsAndDragonsCharacter.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,23 +13,29 @@ namespace DungeonsAndDragonsCharacter.API.Controllers
     public class CharacterController : ControllerBase
     {
         private readonly CharacterDbContext _dbContext;
-        public CharacterController(CharacterDbContext dbContext)
+        private readonly IMapper _mapper;
+
+        public CharacterController(CharacterDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Character>> GetAll()
+        public ActionResult<IEnumerable<CharacterDto>> GetAll()
         {
             var characters = _dbContext
                 .Characters
                 .ToList();
 
-            return Ok(characters);
+
+            var charactersDtos = _mapper.Map<List<CharacterDto>>(characters);
+
+            return Ok(charactersDtos);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<IEnumerable<Character>> Get([FromRoute] int id)
+        public ActionResult<CharacterDto> Get([FromRoute] int id)
         {
             var character = _dbContext
                 .Characters
@@ -38,7 +46,9 @@ namespace DungeonsAndDragonsCharacter.API.Controllers
                 return NotFound();
             }
 
-            return Ok(character);
+            var charactersDtos = _mapper.Map<CharacterDto>(character);
+
+            return Ok(charactersDtos);
 
         }
     }
