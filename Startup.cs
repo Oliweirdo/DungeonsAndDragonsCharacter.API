@@ -1,7 +1,11 @@
 using DungeonsAndDragonsCharacter.API.Entities;
 using DungeonsAndDragonsCharacter.API.Middleware;
 using DungeonsAndDragonsCharacter.API.Migrations;
+using DungeonsAndDragonsCharacter.API.Models;
+using DungeonsAndDragonsCharacter.API.Models.Validators;
 using DungeonsAndDragonsCharacter.API.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -32,7 +36,7 @@ namespace DungeonsAndDragonsCharacter.API
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers().AddFluentValidation();
             services.AddDbContext<CharacterDbContext>();
             services.AddScoped<CharacterSeeder>();
             services.AddScoped<ICharacterService, CharacterService>();
@@ -41,6 +45,7 @@ namespace DungeonsAndDragonsCharacter.API
             services.AddScoped<RequestTimeMiddleware>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IPasswordHasher<Gamer> ,PasswordHasher<Gamer>>();
+            services.AddScoped<IValidator<RegisterGamerDto> , RegisterGamerDtoValidation>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DungeonsAndDragonsCharacter.API", Version = "v1" });
