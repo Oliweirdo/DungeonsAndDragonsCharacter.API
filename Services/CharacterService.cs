@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DungeonsAndDragonsCharacter.API.Entities;
+using DungeonsAndDragonsCharacter.API.Exceptions;
 using DungeonsAndDragonsCharacter.API.Models;
 using Microsoft.Extensions.Logging;
 using System;
@@ -14,8 +15,8 @@ namespace DungeonsAndDragonsCharacter.API.Services
         CharacterDto GetById(int id);
         IEnumerable<CharacterDto> GetAll();
         int Create(CreateCharacterDto dto);
-        bool Delete(int id);
-        bool Update(int id, UpdateCharacterDto dto);
+        void Delete(int id);
+       void Update(int id, UpdateCharacterDto dto);
     }
 
 
@@ -40,8 +41,8 @@ namespace DungeonsAndDragonsCharacter.API.Services
                .Characters
                .FirstOrDefault(r => r.Id == id);
 
-            if (character is null) return null;
-            
+            if (character is null)
+                throw new NotFoundException("Character not found");
 
             var result = _mapper.Map<CharacterDto>(character);
             return result;
@@ -68,7 +69,7 @@ namespace DungeonsAndDragonsCharacter.API.Services
             return character.Id;
         }
 
-        public bool Delete(int id)
+        public void Delete(int id)
         {
             _logger.LogWarning($"Character with id: {id} DELETE action invoked");
 
@@ -76,29 +77,26 @@ namespace DungeonsAndDragonsCharacter.API.Services
               .Characters
               .FirstOrDefault(r => r.Id == id);
 
-            if (character is null) return false;
+            if (character is null)
+                throw new NotFoundException("Character not found");
 
             _dbContext.Characters.Remove(character);
             _dbContext.SaveChanges();
 
-
-            return true;
         }
 
-        public bool Update(int id, UpdateCharacterDto dto)
+        public void Update(int id, UpdateCharacterDto dto)
         {
             var character = _dbContext
               .Characters
               .FirstOrDefault(r => r.Id == id);
 
-            if (character is null) return false;
+            if (character is null)
+                throw new NotFoundException("Character not found");
 
 
             _dbContext.Characters.Update(character);
             _dbContext.SaveChanges();
-
-
-            return true;
         }
     }
 }

@@ -48,24 +48,15 @@ namespace DungeonsAndDragonsCharacter.API.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
-            var isDeleted = _characterService.Delete(id);
-
-            if (isDeleted)
-            {
-                return NoContent();
-            }
-
             return NotFound();
         }
 
         [HttpPatch("{id}")]
         public ActionResult Update([FromBody] UpdateCharacterDto dto, [FromRoute] int id)
         {
-            var isUpdated = _characterService.Update(id, dto);
-            if (!isUpdated)
-                return NotFound();
 
             return Ok();
         }
     }
 }
+ 

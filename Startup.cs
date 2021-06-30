@@ -1,4 +1,5 @@
 using DungeonsAndDragonsCharacter.API.Entities;
+using DungeonsAndDragonsCharacter.API.Middleware;
 using DungeonsAndDragonsCharacter.API.Migrations;
 using DungeonsAndDragonsCharacter.API.Services;
 using Microsoft.AspNetCore.Builder;
@@ -35,6 +36,7 @@ namespace DungeonsAndDragonsCharacter.API
             services.AddScoped<CharacterSeeder>();
             services.AddScoped<ICharacterService, CharacterService>();
             services.AddAutoMapper(this.GetType().Assembly);
+            services.AddScoped<ErrorHandlingMiddleware>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DungeonsAndDragonsCharacter.API", Version = "v1" });
@@ -44,14 +46,14 @@ namespace DungeonsAndDragonsCharacter.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, CharacterSeeder seeder)
         {
+            seeder.Seed();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DungeonsAndDragonsCharacter.API v1"));
             }
-
-            seeder.Seed();
+            app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseHttpsRedirection();
 
             app.UseRouting();
