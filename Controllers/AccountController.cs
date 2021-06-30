@@ -22,10 +22,19 @@ namespace DungeonsAndDragonsCharacter.API.Controllers
         }
 
         [HttpPost("register")]
-        public ActionResult RegisterGamer([FromBody]RegisterGamerDto dto )
+        public ActionResult RegisterGamer([FromBody] RegisterGamerDto dto)
         {
             _accountService.RegisterGamer(dto);
             return Ok();
         }
+
+        [HttpPost("login")]
+        public ActionResult Login([FromBody]LoginDto dto)
+        {
+            string token = _accountService.GenerateJwt(dto);
+
+            return Ok(token);
+        }
+
     }
 }

@@ -41,6 +41,7 @@ namespace DungeonsAndDragonsCharacter.API
 
             Configuration.GetSection("Autentication").Bind(autenticationSettings);
 
+            services.AddSingleton(autenticationSettings);
             services.AddAuthentication(option =>
             {
                 option.DefaultAuthenticateScheme = "Bearer";
