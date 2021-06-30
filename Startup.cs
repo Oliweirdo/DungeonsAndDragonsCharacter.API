@@ -37,6 +37,7 @@ namespace DungeonsAndDragonsCharacter.API
             services.AddScoped<ICharacterService, CharacterService>();
             services.AddAutoMapper(this.GetType().Assembly);
             services.AddScoped<ErrorHandlingMiddleware>();
+            services.AddScoped<RequestTimeMiddleware>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DungeonsAndDragonsCharacter.API", Version = "v1" });
@@ -54,6 +55,7 @@ namespace DungeonsAndDragonsCharacter.API
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DungeonsAndDragonsCharacter.API v1"));
             }
             app.UseMiddleware<ErrorHandlingMiddleware>();
+            app.UseMiddleware<RequestTimeMiddleware>();
             app.UseHttpsRedirection();
 
             app.UseRouting();
