@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DungeonsAndDragonsCharacter.API.Entities;
 using DungeonsAndDragonsCharacter.API.Models;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,11 +23,14 @@ namespace DungeonsAndDragonsCharacter.API.Services
     {
         private readonly CharacterDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly ILogger<CharacterService> _logger;
 
-        public CharacterService(CharacterDbContext dbContext , IMapper mapper)
+
+        public CharacterService(CharacterDbContext dbContext , IMapper mapper, ILogger<CharacterService> logger  )
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _logger = logger;
 
         }
 
@@ -66,6 +70,8 @@ namespace DungeonsAndDragonsCharacter.API.Services
 
         public bool Delete(int id)
         {
+            _logger.LogWarning($"Character with id: {id} DELETE action invoked");
+
             var character = _dbContext
               .Characters
               .FirstOrDefault(r => r.Id == id);
