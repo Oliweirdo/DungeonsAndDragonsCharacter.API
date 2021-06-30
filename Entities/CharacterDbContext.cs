@@ -16,13 +16,27 @@ namespace DungeonsAndDragonsCharacter.API.Entities
         public DbSet<CharacterSkills> CharacterSkillsSet { get; set; }
         public DbSet<CharacterProperty> CharacterProperties { get; set; }
 
+        public DbSet<Gamer> Gamers { get; set; }
+        public DbSet<Role> Roles { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
                 modelBuilder
                     .Entity<Character>()
                     .Property(r=>r.Name)
                     .IsRequired();
-            
+
+                modelBuilder
+                    .Entity<Gamer>()
+                    .Property(r => r.Email)
+                    .IsRequired();
+
+                modelBuilder
+                    .Entity<Role>()
+                    .Property(u => u.Name)
+                    .IsRequired();
+
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
