@@ -4,14 +4,16 @@ using DungeonsAndDragonsCharacter.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DungeonsAndDragonsCharacter.API.Migrations
 {
     [DbContext(typeof(CharacterDbContext))]
-    partial class CharacterDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210630083452_gamersAndRoles")]
+    partial class gamersAndRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
