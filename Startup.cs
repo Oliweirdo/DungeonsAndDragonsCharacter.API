@@ -38,6 +38,7 @@ namespace DungeonsAndDragonsCharacter.API
             services.AddAutoMapper(this.GetType().Assembly);
             services.AddScoped<ErrorHandlingMiddleware>();
             services.AddScoped<RequestTimeMiddleware>();
+            services.AddScoped<IAccountService, AccountService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DungeonsAndDragonsCharacter.API", Version = "v1" });
