@@ -22,6 +22,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using DungeonsAndDragonsCharacter.API.Authorization;
 
 namespace DungeonsAndDragonsCharacter.API
 {
@@ -61,6 +63,7 @@ namespace DungeonsAndDragonsCharacter.API
             
             });
 
+            services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
             services.AddControllers().AddFluentValidation();
             services.AddDbContext<CharacterDbContext>();
             services.AddScoped<CharacterSeeder>();
@@ -71,6 +74,9 @@ namespace DungeonsAndDragonsCharacter.API
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IPasswordHasher<Gamer> ,PasswordHasher<Gamer>>();
             services.AddScoped<IValidator<RegisterGamerDto> , RegisterGamerDtoValidation>();
+            services.AddScoped<IGamerContextService, GamerContextService>();
+            services.AddHttpContextAccessor();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DungeonsAndDragonsCharacter.API", Version = "v1" });

@@ -23,6 +23,10 @@ namespace DungeonsAndDragonsCharacter.API.Middleware
             {
                 await next.Invoke(context);
             }
+            catch(ForbidException forbidException)
+            {
+                context.Response.StatusCode = 403;
+            }
             catch(BadHttpRequestException badRequestException)
             {
                 context.Response.StatusCode = 400;

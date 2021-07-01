@@ -16,6 +16,8 @@ namespace DungeonsAndDragonsCharacter.API.Entities
         public string Alignment { get; set; }
         public double ExperiencePoints { get; set; }
 
+        public int? CreatedById { get; set; }
+        public virtual Gamer CreatedBy { get; set; }
 
 
         public virtual CharacterProperty CharacterProperties { get; set; }
