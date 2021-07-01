@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using DungeonsAndDragonsCharacter.API.Authorization;
 using DungeonsAndDragonsCharacter.API.Entities;
 using DungeonsAndDragonsCharacter.API.Exceptions;
 using DungeonsAndDragonsCharacter.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DungeonsAndDragonsCharacter.API.Services
@@ -14,9 +17,9 @@ namespace DungeonsAndDragonsCharacter.API.Services
     {
         CharacterDto GetById(int id);
         IEnumerable<CharacterDto> GetAll();
-        int Create(CreateCharacterDto dto);
-        void Delete(int id);
-       void Update(int id, UpdateCharacterDto dto);
+        int Create(CreateCharacterDto dto, int gamerId);
+        void Delete(int id, ClaimsPrincipal gamer);
+       void Update(int id, UpdateCharacterDto dto, ClaimsPrincipal gamer);
     }
 
 
@@ -25,13 +28,16 @@ namespace DungeonsAndDragonsCharacter.API.Services
         private readonly CharacterDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly ILogger<CharacterService> _logger;
+        private readonly IAuthorizationService _authorizationService;
 
 
-        public CharacterService(CharacterDbContext dbContext , IMapper mapper, ILogger<CharacterService> logger  )
+        public CharacterService(CharacterDbContext dbContext , IMapper mapper, ILogger<CharacterService> logger  ,
+            IAuthorizationService authorizationService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _logger = logger;
+            _authorizationService = authorizationService;
 
         }
 
@@ -60,16 +66,17 @@ namespace DungeonsAndDragonsCharacter.API.Services
                 return charactersDtos;
             }
 
-        public int Create(CreateCharacterDto dto)
+        public int Create(CreateCharacterDto dto, int gamerId)
         {
             var character = _mapper.Map<Character>(dto);
+            character.CreatedById = gamerId;
             _dbContext.Characters.Add(character);
             _dbContext.SaveChanges();
 
             return character.Id;
         }
 
-        public void Delete(int id)
+        public void Delete(int id, ClaimsPrincipal gamer)
         {
             _logger.LogWarning($"Character with id: {id} DELETE action invoked");
 
@@ -80,12 +87,20 @@ namespace DungeonsAndDragonsCharacter.API.Services
             if (character is null)
                 throw new NotFoundException("Character not found");
 
+            var authorizationResult = _authorizationService.AuthorizeAsync(gamer, character,
+              new ResourceOperationRequirement(ResourceOperation.Update)).Result;
+
+            if (!authorizationResult.Succeeded)
+            {
+                throw new ForbidException();
+            }
+
             _dbContext.Characters.Remove(character);
             _dbContext.SaveChanges();
 
         }
 
-        public void Update(int id, UpdateCharacterDto dto)
+        public void Update(int id, UpdateCharacterDto dto, ClaimsPrincipal gamer)
         {
             var character = _dbContext
               .Characters
@@ -94,6 +109,13 @@ namespace DungeonsAndDragonsCharacter.API.Services
             if (character is null)
                 throw new NotFoundException("Character not found");
 
+            var authorizationResult = _authorizationService.AuthorizeAsync(gamer, character,
+                new ResourceOperationRequirement(ResourceOperation.Update)).Result;
+
+            if (!authorizationResult.Succeeded)
+            {
+                throw new ForbidException();
+            }
 
             _dbContext.Characters.Update(character);
             _dbContext.SaveChanges();
