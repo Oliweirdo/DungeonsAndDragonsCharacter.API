@@ -74,6 +74,9 @@ namespace DungeonsAndDragonsCharacter.API
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IPasswordHasher<Gamer> ,PasswordHasher<Gamer>>();
             services.AddScoped<IValidator<RegisterGamerDto> , RegisterGamerDtoValidation>();
+            services.AddScoped<IGamerContextService, GamerContextService>();
+            services.AddHttpContextAccessor();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DungeonsAndDragonsCharacter.API", Version = "v1" });

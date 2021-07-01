@@ -45,23 +45,23 @@ namespace DungeonsAndDragonsCharacter.API.Controllers
         public ActionResult CreateCharacter([FromBody] CreateCharacterDto dto)
         {
             var gamerId = int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var id = _characterService.Create(dto, gamerId);
+            var id = _characterService.Create(dto);
 
             return Created($"/api/character/{id}", null);
         }
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin, GameMaster")]
-        public ActionResult Delete([FromRoute] int id, ClaimsPrincipal gamer)
+        public ActionResult Delete([FromRoute] int id)
         {
-            _characterService.Delete(id, gamer);
+            _characterService.Delete(id);
             return NotFound();
         }
 
         [HttpPatch("{id}")]
-        public ActionResult Update([FromBody] UpdateCharacterDto dto, [FromRoute] int id, ClaimsPrincipal gamer)
+        public ActionResult Update([FromBody] UpdateCharacterDto dto, [FromRoute] int id)
         {
-            _characterService.Update(id, dto, gamer);
+            _characterService.Update(id, dto);
 
             return Ok();
         }

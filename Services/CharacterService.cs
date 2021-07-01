@@ -17,9 +17,9 @@ namespace DungeonsAndDragonsCharacter.API.Services
     {
         CharacterDto GetById(int id);
         IEnumerable<CharacterDto> GetAll();
-        int Create(CreateCharacterDto dto, int gamerId);
-        void Delete(int id, ClaimsPrincipal gamer);
-       void Update(int id, UpdateCharacterDto dto, ClaimsPrincipal gamer);
+        int Create(CreateCharacterDto dto);
+        void Delete(int id);
+       void Update(int id, UpdateCharacterDto dto);
     }
 
 
@@ -29,10 +29,11 @@ namespace DungeonsAndDragonsCharacter.API.Services
         private readonly IMapper _mapper;
         private readonly ILogger<CharacterService> _logger;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IGamerContextService _gamerContextService;
 
 
         public CharacterService(CharacterDbContext dbContext , IMapper mapper, ILogger<CharacterService> logger  ,
-            IAuthorizationService authorizationService)
+            IAuthorizationService authorizationService, IGamerContextService gamerContextService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
@@ -66,17 +67,17 @@ namespace DungeonsAndDragonsCharacter.API.Services
                 return charactersDtos;
             }
 
-        public int Create(CreateCharacterDto dto, int gamerId)
+        public int Create(CreateCharacterDto dto)
         {
             var character = _mapper.Map<Character>(dto);
-            character.CreatedById = gamerId;
+            character.CreatedById = _gamerContextService.GetGamerId;
             _dbContext.Characters.Add(character);
             _dbContext.SaveChanges();
 
             return character.Id;
         }
 
-        public void Delete(int id, ClaimsPrincipal gamer)
+        public void Delete(int id)
         {
             _logger.LogWarning($"Character with id: {id} DELETE action invoked");
 
@@ -87,7 +88,7 @@ namespace DungeonsAndDragonsCharacter.API.Services
             if (character is null)
                 throw new NotFoundException("Character not found");
 
-            var authorizationResult = _authorizationService.AuthorizeAsync(gamer, character,
+            var authorizationResult = _authorizationService.AuthorizeAsync(_gamerContextService.Gamer, character,
               new ResourceOperationRequirement(ResourceOperation.Update)).Result;
 
             if (!authorizationResult.Succeeded)
@@ -100,7 +101,7 @@ namespace DungeonsAndDragonsCharacter.API.Services
 
         }
 
-        public void Update(int id, UpdateCharacterDto dto, ClaimsPrincipal gamer)
+        public void Update(int id, UpdateCharacterDto dto)
         {
             var character = _dbContext
               .Characters
@@ -109,7 +110,7 @@ namespace DungeonsAndDragonsCharacter.API.Services
             if (character is null)
                 throw new NotFoundException("Character not found");
 
-            var authorizationResult = _authorizationService.AuthorizeAsync(gamer, character,
+            var authorizationResult = _authorizationService.AuthorizeAsync(_gamerContextService.Gamer, character,
                 new ResourceOperationRequirement(ResourceOperation.Update)).Result;
 
             if (!authorizationResult.Succeeded)
